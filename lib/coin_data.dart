@@ -37,16 +37,21 @@ const apiKey = 'FA75A329-CB45-4124-BFF5-ED752B777CE8';
 
 class CoinData {
   Future getCoinData(String selectedCurrency) async {
-    String requestURL = '$coinAPIURL/BTC/$selectedCurrency?apikey=$apiKey';
-    http.Response response = await http.get(Uri.parse(requestURL));
+    Map<String, String> cryptoPrices = {};
+    for (String crypto in cryptoList) {
+      String requestURL =
+          '$coinAPIURL/$crypto/$selectedCurrency?apikey=$apiKey';
+      http.Response response = await http.get(Uri.parse(requestURL));
 
-    if (response.statusCode == 200) {
-      var decodeData = jsonDecode(response.body);
-      var lastPrice = decodeData['rate'];
-      return lastPrice;
-    } else {
-      print(response.statusCode);
-      throw 'Error getting the requested url';
+      if (response.statusCode == 200) {
+        var decodeData = jsonDecode(response.body);
+        var lastPrice = decodeData['rate'];
+        cryptoPrices[crypto] = lastPrice.toStringAsFixed(0);
+      } else {
+        print(response.statusCode);
+        throw 'Error getting the requested url';
+      }
     }
+    return cryptoPrices;
   }
 }
