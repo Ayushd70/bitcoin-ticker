@@ -79,6 +79,8 @@ class _PriceScreenState extends State<PriceScreen> {
     getData();
   }
 
+  //TODO: Create a method that loops through the cryptoList and generate a CryptoCard for each.
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
