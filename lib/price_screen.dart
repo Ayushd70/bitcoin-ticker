@@ -101,7 +101,7 @@ class _PriceScreenState extends State<PriceScreen> {
     makeCards();
     return Scaffold(
       appBar: AppBar(
-        title: Text('🤑 Coin Ticker'),
+        title: Text('Crypto Coin Ticker'),
         centerTitle: true,
       ),
       body: Column(
