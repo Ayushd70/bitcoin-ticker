@@ -32,8 +32,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ios
-          release_name: BitcoinTicker iOS Release
+          tag_name: ${{ github.ref }}
+          release_name: BitcoinTicker iOS Release  ${{ github.ref }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
