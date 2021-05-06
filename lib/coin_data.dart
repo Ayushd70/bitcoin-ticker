@@ -26,31 +26,25 @@ const List<String> currenciesList = [
   'ZAR'
 ];
 
-const List<String> cryptoList = [
-  'BTC',
-  'ETH',
-  'LTC',
-];
-
-const coinAPIURL = 'https://rest.coinapi.io/v1/exchangerate';
-const apiKey = 'FA75A329-CB45-4124-BFF5-ED752B777CE8';
+const coinAPIURL = 'https://api.binance.com/api/v3/ticker/price';
+var cryptoList = <String>[];
 
 class CoinData {
   Future getCoinData(String selectedCurrency) async {
+    var response = await http.get(Uri.parse(coinAPIURL));
     Map<String, String> cryptoPrices = {};
-    for (String crypto in cryptoList) {
-      String requestURL =
-          '$coinAPIURL/$crypto/$selectedCurrency?apikey=$apiKey';
-      http.Response response = await http.get(Uri.parse(requestURL));
 
-      if (response.statusCode == 200) {
-        var decodeData = jsonDecode(response.body);
-        var lastPrice = decodeData['rate'];
-        cryptoPrices[crypto] = lastPrice.toStringAsFixed(0);
+    if (response.statusCode == 200) {
+      final decodeData = jsonDecode(response.body);
+      if (decodeData != null) {
+        decodeData.forEach((e) {
+          cryptoList.add(e['symbol']);
+          cryptoPrices[e['symbol']] = e['price'];
+        });
       } else {
-        print(response.statusCode);
-        throw 'Error getting the requested url';
-      }
+          print(response.statusCode);
+          throw 'Error getting the requested url';
+	      }
     }
     return cryptoPrices;
   }
