@@ -79,26 +79,8 @@ class _PriceScreenState extends State<PriceScreen> {
     getData();
   }
 
-  Column makeCards() {
-    List<CryptoCard> cryptoCards = [];
-    for (String crypto in cryptoList) {
-      cryptoCards.add(
-        CryptoCard(
-          cryptoCurrency: crypto,
-          selectedCurrency: selectedCurrency,
-          value: isWaiting ? '?' : coinValues[crypto],
-        ),
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: cryptoCards,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    makeCards();
     return Scaffold(
       appBar: AppBar(
         title: Text('Crypto Coin Ticker'),
@@ -108,7 +90,10 @@ class _PriceScreenState extends State<PriceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          makeCards(),
+          Expanded(
+              child: CryptoCard(
+                  value: isWaiting ? '?' : coinValues,
+                  selectedCurrency: selectedCurrency)),
           Container(
             height: 100.0,
             alignment: Alignment.center,
@@ -123,18 +108,12 @@ class _PriceScreenState extends State<PriceScreen> {
 }
 
 class CryptoCard extends StatelessWidget {
-  const CryptoCard({
-    this.value,
-    this.selectedCurrency,
-    this.cryptoCurrency,
-  });
+  const CryptoCard({this.value, this.selectedCurrency});
 
-  final String value;
+  final Map<String, String> value;
   final String selectedCurrency;
-  final String cryptoCurrency;
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildCryptoCards(BuildContext context, int index) {
     return Padding(
       padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
       child: Card(
@@ -146,7 +125,12 @@ class CryptoCard extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
           child: Text(
-            '1 $cryptoCurrency = $value $selectedCurrency',
+            '1 ' +
+                cryptoList[index] +
+                ' = ' +
+                value[cryptoList[index]] +
+                ' ' +
+                selectedCurrency,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 20.0,
@@ -155,6 +139,14 @@ class CryptoCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: cryptoList.length,
+      itemBuilder: _buildCryptoCards,
     );
   }
 }
